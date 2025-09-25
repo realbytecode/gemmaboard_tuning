@@ -6,13 +6,14 @@ Simple evaluation pipeline for AI Keyboard.
 import json
 import sys
 import argparse
+import os
 from typing import Dict, List, Any, Optional, Union
 from dataclasses import dataclass
 from datetime import datetime
 import logging
 
-from inference import create_test_inference_system, InferenceSystem
-from level_evaluators import Level1SafetyEvaluator, Level2QualityEvaluator
+from .inference import create_test_inference_system, InferenceSystem
+from .evaluators import Level1SafetyEvaluator, Level2QualityEvaluator
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -184,21 +185,23 @@ class EvaluationPipeline:
         return report
 
 
-def run_evaluation(test_file: str, model_type: str = "duplicate", model_name: str = None, prompt_file: str = "prompts/tone_prompts.json", save_results: bool = True):
+def run_evaluation(test_file: str, model_type: str = "duplicate", model_name: str = None, prompt_file: str = "prompts/tone_prompts.json", save_results: bool = True, remote: bool = False, host: Optional[str] = None):
     """Run evaluation pipeline"""
 
     print(f"Starting evaluation with {model_type} model")
     if model_name:
         print(f"Model: {model_name}")
+    if remote or host:
+        print(f"Using remote Ollama at: {host or os.getenv('OLLAMA_HOST', 'http://localhost:11434')}")
     print(f"Dataset: {test_file}")
     print(f"Prompts: {prompt_file}")
     print("=" * 60)
 
     # Create model
     if model_type in ["gemma3n", "gemma2b", "gemma"]:
-        model = create_test_inference_system(model_type, model_name=model_name, prompt_file=prompt_file)
+        model = create_test_inference_system(model_type, model_name=model_name, prompt_file=prompt_file, remote=remote, host=host)
     else:
-        model = create_test_inference_system(model_type, prompt_file=prompt_file)
+        model = create_test_inference_system(model_type, prompt_file=prompt_file, remote=remote, host=host)
 
     # Create pipeline
     pipeline = EvaluationPipeline(model, prompt_file=prompt_file)
@@ -259,19 +262,17 @@ def run_evaluation(test_file: str, model_type: str = "duplicate", model_name: st
 
     # Save results
     if save_results:
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        # Create filename based on model and dataset
         dataset_name = test_file.split('/')[-1].replace('.json', '')
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         model_desc = model_name if model_name else model_type
         output_file = f"results/evaluations/{model_desc}_{dataset_name}_{timestamp}.json"
 
-        try:
-            with open(output_file, 'w') as f:
-                json.dump(report, f, indent=2)
-            print(f"\n{'='*60}")
-            print(f"Report saved to: {output_file}")
-        except Exception as e:
-            logger.error(f"Failed to save report: {e}")
+        os.makedirs("results/evaluations", exist_ok=True)
+        with open(output_file, 'w') as f:
+            json.dump(report, f, indent=2)
+
+        print(f"\n{'='*60}")
+        print(f"Report saved to: {output_file}")
 
     return pipeline
 
@@ -331,6 +332,17 @@ Examples:
         help='Reduce output verbosity'
     )
 
+    parser.add_argument(
+        '--remote',
+        action='store_true',
+        help='Use remote Ollama server with retry logic'
+    )
+
+    parser.add_argument(
+        '--host',
+        help='Remote Ollama host URL (e.g., http://pod-id.runpod.io:11434)'
+    )
+
     args = parser.parse_args()
 
     # Set logging level
@@ -344,7 +356,9 @@ Examples:
             model_type=args.model,
             model_name=args.model_name,
             prompt_file=args.prompt_file,
-            save_results=not args.no_save
+            save_results=not args.no_save,
+            remote=args.remote,
+            host=args.host
         )
 
         if pipeline is None:

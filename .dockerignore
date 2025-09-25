@@ -1,0 +1,61 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
+
+# Results and logs
+results/
+*.log
+
+# Environment
+.env
+.env.local
+*.env
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+*.md
+README*
+docs/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# MacOS
+.DS_Store
+
+# RunPod specific
+.runpod_pod_id
+
+# Data files (keep only necessary)
+data/*.json
+!data/gemma3n_test.json
+
+# Prompts (already in image)
+prompts/
+
+# Tests
+tests/
+
+# Scripts (not needed in container)
+scripts/

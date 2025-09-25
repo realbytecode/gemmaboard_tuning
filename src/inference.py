@@ -7,6 +7,7 @@ Provides single model inference for testing and evaluation.
 import time
 import hashlib
 import json
+import os
 from typing import Dict, Any, Optional, List
 from dataclasses import dataclass
 from enum import Enum
@@ -136,7 +137,11 @@ class OllamaGemmaModel(BaseInferenceModel):
         super().__init__(model_type, f"ollama_{model_name}")
         self.model_name = model_name
         self.prompt_file = prompt_file
-        self.client = ollama.Client()
+
+        # Support remote Ollama host
+        ollama_host = os.getenv('OLLAMA_HOST', 'http://localhost:11434')
+        self.client = ollama.Client(host=ollama_host)
+        logger.info(f"Connecting to Ollama at: {ollama_host}")
 
         # Load tone prompts
         self.tone_prompts = self._load_tone_prompts()
@@ -280,6 +285,66 @@ Rewritten text:"""
             )
 
 
+class RemoteOllamaModel(OllamaGemmaModel):
+    """Specialized Ollama model for remote connections with retry logic"""
+
+    def __init__(self, model_name: str = "gemma3n:e4b", host: str = None,
+                 prompt_file: str = "prompts/tone_prompts.json",
+                 timeout: int = 120, max_retries: int = 3):
+        """
+        Initialize remote Ollama model with enhanced error handling
+
+        Args:
+            model_name: Name of the Ollama model to use
+            host: Ollama host URL (overrides OLLAMA_HOST env var)
+            prompt_file: Path to the tone prompts JSON file
+            timeout: Request timeout in seconds
+            max_retries: Maximum number of retry attempts
+        """
+        # Set host before parent init
+        if host:
+            os.environ['OLLAMA_HOST'] = host
+
+        super().__init__(model_name, prompt_file)
+        self.timeout = timeout
+        self.max_retries = max_retries
+        self.host = host or os.getenv('OLLAMA_HOST', 'http://localhost:11434')
+
+    def predict(self, input_text: str, **kwargs) -> InferenceResult:
+        """Predict with retry logic for remote connections"""
+        last_error = None
+
+        for attempt in range(self.max_retries):
+            try:
+                if attempt > 0:
+                    logger.info(f"Retry attempt {attempt + 1}/{self.max_retries}")
+                    time.sleep(2 ** attempt)  # Exponential backoff
+
+                return super().predict(input_text, **kwargs)
+
+            except Exception as e:
+                last_error = e
+                logger.warning(f"Prediction attempt {attempt + 1} failed: {e}")
+
+        # All retries failed
+        logger.error(f"All {self.max_retries} attempts failed for remote Ollama")
+        return InferenceResult(
+            text="[Error: Failed to connect to remote Ollama]",
+            confidence=0.0,
+            latency_ms=0.0,
+            model_type=self.model_type,
+            metadata={"error": str(last_error), "host": self.host}
+        )
+
+    def health_check(self) -> bool:
+        """Check if remote Ollama is accessible"""
+        try:
+            response = self.client.list()
+            return True
+        except Exception as e:
+            logger.error(f"Health check failed for {self.host}: {e}")
+            return False
+
 class InferenceSystem:
     """
     Single model inference system for evaluation.
@@ -318,7 +383,7 @@ class InferenceSystem:
         }
 
 
-def create_test_inference_system(model_type: str = "duplicate", unit_test_dataset_path: str = "data/unit_test_dataset.json", model_name: str = None, prompt_file: str = "prompts/tone_prompts.json") -> InferenceSystem:
+def create_test_inference_system(model_type: str = "duplicate", unit_test_dataset_path: str = "data/unit_test_dataset.json", model_name: str = None, prompt_file: str = "prompts/tone_prompts.json", remote: bool = False, host: Optional[str] = None) -> InferenceSystem:
     """
     Create a test inference system with specified model.
 
@@ -327,6 +392,8 @@ def create_test_inference_system(model_type: str = "duplicate", unit_test_datase
         unit_test_dataset_path: Path to unit test dataset JSON file
         model_name: Optional model name for Ollama models
         prompt_file: Path to tone prompts JSON file
+        remote: Use RemoteOllamaModel with retry logic
+        host: Remote Ollama host URL
 
     Returns:
         InferenceSystem with the specified model
@@ -334,10 +401,15 @@ def create_test_inference_system(model_type: str = "duplicate", unit_test_datase
     if model_type == "duplicate":
         model = DuplicateModel(response_delay_ms=5, unit_test_dataset_path=unit_test_dataset_path)
     elif model_type in ["gemma3n", "gemma2b", "gemma"]:
-        # Use provided model_name or default based on model_type
+        # Use provided model_name or default to gemma3n:e4b
         if model_name is None:
-            model_name = "gemma3n" if model_type == "gemma3n" else "gemma:2b"
-        model = OllamaGemmaModel(model_name=model_name, prompt_file=prompt_file)
+            model_name = "gemma3n:e4b"
+
+        # Use remote model with retry logic if specified
+        if remote or host:
+            model = RemoteOllamaModel(model_name=model_name, host=host, prompt_file=prompt_file)
+        else:
+            model = OllamaGemmaModel(model_name=model_name, prompt_file=prompt_file)
     else:
         raise ValueError(f"Unknown model type: {model_type}")
 

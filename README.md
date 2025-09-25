@@ -1,5 +1,7 @@
 # AI Keyboard - Tone Transformation System
 
+![Docker Build](https://github.com/yourusername/gemmaboard_tuning/actions/workflows/docker-deploy.yml/badge.svg)
+
 A privacy-focused, locally-run AI system that transforms text messages to match different tones and contexts while maintaining safety and appropriateness.
 
 ## Overview
@@ -34,25 +36,28 @@ ollama pull gemma3n
 #### Evaluation Pipeline (Recommended)
 ```bash
 # Run with duplicate model (fast testing)
-python simple_evaluation.py
+python scripts/run_evaluation.py
 
 # Run with Gemma model on tone dataset
-python simple_evaluation.py --model gemma3n --model-name gemma3n:e4b --dataset data/tone_test_subset.json
+python scripts/run_evaluation.py --model gemma3n --model-name gemma3n:e4b --dataset data/tone_test_subset.json
 
 # Show help and available options
-python simple_evaluation.py --help
+python scripts/run_evaluation.py --help
 ```
 
-#### Unit Testing
+#### Testing
 ```bash
-# Run unit tests with duplicate model
-python tests/unit_test_framework.py
+# Run all tests with pytest
+pytest tests/test_evaluation.py -v
 
-# Test Gemma model directly
-python tests/test_gemma.py
+# Run specific test class
+pytest tests/test_evaluation.py::TestEvaluators -v
 
-# Check Ollama connection
-python tests/test_ollama.py
+# Run evaluation with test dataset
+python scripts/run_evaluation.py --dataset data/unit_test_dataset.json
+
+# Quick test with subset
+python scripts/run_evaluation.py --dataset data/tone_test_subset.json
 ```
 
 #### Tone Management
@@ -79,12 +84,22 @@ python add_tone_examples.py work-polite "Could you please assist with this matte
 ## Project Structure
 
 ```
-ai_keyboard/
-├── Core Modules
-│   ├── inference.py              # Model inference (Duplicate, Gemma3n via Ollama)
-│   ├── level_evaluators.py       # Safety & Quality evaluation (L1/L2)
-│   ├── simple_evaluation.py      # Main evaluation pipeline
-│   └── add_tone_examples.py      # Tone reference management
+gemmaboard_tuning/
+├── src/                          # Core application modules
+│   ├── inference.py              # Model inference (Local & Remote Ollama)
+│   ├── evaluators.py             # Safety & Quality evaluation (L1/L2)
+│   └── evaluation_pipeline.py    # Main evaluation pipeline
+│
+├── deployment/                   # Deployment configurations
+│   ├── docker/                   # Docker setup
+│   │   ├── Dockerfile
+│   │   ├── docker-entrypoint.sh
+│   │   └── docker-build.sh
+│   └── runpod/                   # RunPod GPU deployment
+│       ├── setup_runpod.py
+│       ├── health_check.py
+│       ├── check_pod.py
+│       └── startup.sh
 │
 ├── data/                         # All datasets and references
 │   ├── tone_references.json      # Tone examples for centroid calculation
@@ -92,16 +107,19 @@ ai_keyboard/
 │   ├── tone_test_dataset.json    # Full tone transformation dataset
 │   └── tone_test_subset.json     # Quick test subset
 │
-├── tests/                        # All test scripts
-│   ├── unit_test_framework.py    # Unit testing framework
-│   ├── test_gemma.py             # Gemma model tests
-│   ├── test_ollama.py            # Ollama connection tests
-│   └── evaluate_gemma.py         # Full Gemma evaluation
+├── prompts/                      # Prompt templates (all versions kept for experiments)
+│   ├── tone_prompts.json
+│   ├── tone_prompts_v2.json
+│   ├── tone_prompts_v3.json
+│   ├── tone_prompts_v4.json
+│   └── prompt_manager.py
+│
+├── scripts/                      # Entry point scripts
+│   └── run_evaluation.py         # Main evaluation runner
 │
 └── results/                      # All test outputs
     ├── unit_tests/               # Unit test reports
-    ├── evaluations/              # Model evaluation results
-    └── reports/                  # Analysis reports
+    └── evaluations/              # Model evaluation results
 ```
 
 ## Architecture
@@ -135,25 +153,33 @@ Advanced quality metrics:
 ### Command Line Usage
 ```bash
 # Quick evaluation with duplicate model
-python simple_evaluation.py --dataset data/tone_test_subset.json
+python scripts/run_evaluation.py --dataset data/tone_test_subset.json
 
-# Full evaluation with Gemma model
-python simple_evaluation.py \
+# Full evaluation with Gemma model (local)
+python scripts/run_evaluation.py \
   --model gemma3n \
   --model-name gemma3n:e4b \
   --dataset data/tone_test_dataset.json
 
+# Evaluation with remote RunPod GPU
+python scripts/run_evaluation.py \
+  --model gemma3n \
+  --model-name gemma3n:e4b \
+  --dataset data/tone_test_dataset.json \
+  --remote \
+  --host http://your-pod-id.runpod.io:11434
+
 # Quiet mode (reduce output)
-python simple_evaluation.py --quiet
+python scripts/run_evaluation.py --quiet
 
 # Skip saving results
-python simple_evaluation.py --no-save
+python scripts/run_evaluation.py --no-save
 ```
 
 ### Python API
 ```python
-from simple_evaluation import EvaluationPipeline
-from inference import create_test_inference_system
+from src.evaluation_pipeline import EvaluationPipeline
+from src.inference import create_test_inference_system
 
 # Setup with Gemma model
 model = create_test_inference_system("gemma3n", model_name="gemma3n:e4b")
@@ -186,20 +212,6 @@ print(f"Safety pass rate: {report['summary']['level1_passed']}")
 }
 ```
 
-## Success Metrics
-
-Current Performance:
-- ✅ **100% Unit Test Pass Rate**: All safety/quality checks working
-- ✅ **Level 1 Safety**: better-profanity + custom filtering
-- ✅ **Level 2 Quality**: Semantic similarity + tone detection
-- ✅ **Gemma Integration**: Real LLM via Ollama working
-- ✅ **Organized Codebase**: Clean separation of concerns
-
-Targets:
-- 🎯 **>90% Tone Accuracy**: Using embedding centroids
-- 🎯 **>85% Meaning Preservation**: Semantic similarity threshold
-- 🎯 **<30s Processing Time**: Gemma inference optimization
-
 ## Installation & Setup
 
 ### Prerequisites
@@ -230,16 +242,74 @@ ollama serve
 ollama pull gemma3n
 
 # 7. Test installation
-python simple_evaluation.py --model gemma3n --model-name gemma3n:e4b --dataset data/tone_test_subset.json
+python scripts/run_evaluation.py --model gemma3n --model-name gemma3n:e4b --dataset data/tone_test_subset.json
 ```
+
+## RunPod Deployment
+
+### Quick Setup with RunPod GPU
+
+```bash
+# Configure environment
+cp .env.template .env
+# Edit .env and add your RunPod API key
+
+# Create pod with default image (realbytecode/ollama-gemma3n:latest)
+python deployment/runpod/setup_runpod.py --gpu-type "RTX 3090"
+
+# Or use your own Docker image (auto-built by CI/CD)
+python deployment/runpod/setup_runpod.py --docker-image yourusername/ollama-gemma3n:latest
+
+# Test connection
+python deployment/runpod/health_check.py http://your-pod-id.runpod.io:11434
+
+# Run evaluation with remote GPU
+python scripts/run_evaluation.py \
+  --model gemma3n \
+  --model-name gemma3n:e4b \
+  --dataset data/unit_test_dataset.json \
+  --remote \
+  --host http://your-pod-id.runpod.io:11434
+
+# Stop pod when done
+python deployment/runpod/setup_runpod.py --pod-id YOUR_POD_ID --stop
+```
+
+Available GPU types: RTX 3090, RTX 4090, A40, A5000, A4000
+
+## CI/CD Pipeline
+
+### Automatic Docker Deployment
+
+This project includes GitHub Actions CI/CD that automatically builds and deploys Docker images on every push to master:
+
+- **Automatic Builds**: Triggers on every commit to master branch
+- **Dual Tagging**: Creates both `latest` and timestamped tags (e.g., `20240125-143022`)
+- **Docker Hub Integration**: Pushes to Docker Hub for easy RunPod deployment
+
+### Setup CI/CD
+
+1. **Configure Docker Hub Secrets** in GitHub:
+   - `DOCKER_USERNAME`: Your Docker Hub username
+   - `DOCKER_TOKEN`: Docker Hub access token (create at hub.docker.com)
+
+2. **Push to Master** to trigger automatic build and deployment
+
+3. **Use in RunPod** with your auto-built image:
+   ```bash
+   python deployment/runpod/setup_runpod.py \
+     --docker-image yourusername/ollama-gemma3n:latest
+   ```
+
+See [.github/workflows/README.md](.github/workflows/README.md) for detailed setup instructions.
 
 ## Usage Patterns
 
 ### Development Workflow
 1. **Quick Testing**: Use duplicate model for fast iteration
-2. **Unit Testing**: Run `tests/unit_test_framework.py` after changes
-3. **Model Testing**: Use `tests/test_gemma.py` to verify Gemma integration
-4. **Full Evaluation**: Run with real datasets using `simple_evaluation.py`
+2. **Local Testing**: Run evaluation locally with Ollama
+3. **Remote Testing**: Use RunPod for GPU-accelerated inference
+4. **Full Evaluation**: Run with real datasets using `scripts/run_evaluation.py`
 
 ### Production Deployment
 1. **Model Selection**: Choose appropriate Gemma variant
