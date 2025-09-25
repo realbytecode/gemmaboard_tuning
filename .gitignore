@@ -205,3 +205,12 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# claude
+.claude/
+.claudeignore
+todo.md
+.mcp.json
+
+# outputs
+results/

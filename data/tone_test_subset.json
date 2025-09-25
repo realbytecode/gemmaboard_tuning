@@ -1,0 +1,38 @@
+[
+  {
+    "test_id": "WP001",
+    "input": "this is stupid and makes no sense",
+    "tone": "work-polite",
+    "expected_output": "I have some concerns about this approach"
+  },
+  {
+    "test_id": "WD001",
+    "input": "I need the report by tomorrow",
+    "tone": "work-direct",
+    "expected_output": "Report needed by tomorrow"
+  },
+  {
+    "test_id": "PP001",
+    "input": "I can't come to your party",
+    "tone": "personal-polite",
+    "expected_output": "I'm so sorry, but I won't be able to make it to your party"
+  },
+  {
+    "test_id": "PD001",
+    "input": "Let's meet at 7pm",
+    "tone": "personal-direct",
+    "expected_output": "Meet at 7pm"
+  },
+  {
+    "test_id": "PUP001",
+    "input": "The service was terrible",
+    "tone": "public-polite",
+    "expected_output": "I had some concerns about the service quality"
+  },
+  {
+    "test_id": "PUD001",
+    "input": "Registration closes tomorrow at 5pm",
+    "tone": "public-direct",
+    "expected_output": "Registration closes tomorrow at 5pm"
+  }
+]

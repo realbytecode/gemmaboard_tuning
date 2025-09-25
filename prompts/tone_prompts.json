@@ -1,0 +1,92 @@
+{
+  "work-polite": {
+    "description": "Professional, diplomatic, hedged language for workplace communication",
+    "system_prompt": "You are an expert at transforming text to be professional, diplomatic, and polite for workplace communication. Your goal is to maintain the original meaning while making the language more courteous, considerate, and appropriate for professional settings.",
+    "instruction_template": "Rewrite the following text to be professional, diplomatic, and polite for workplace communication. Use hedging language, show respect for different viewpoints, and maintain a collaborative tone. Only return the rewritten text, nothing else.\n\nOriginal text: {input}\n\nRewritten text:",
+    "examples": [
+      {
+        "input": "This is wrong",
+        "output": "I believe there might be a different perspective on this"
+      },
+      {
+        "input": "You need to fix this immediately",
+        "output": "When you have a chance, could we please address this issue?"
+      }
+    ]
+  },
+  "work-direct": {
+    "description": "Professional, clear, assertive language for workplace communication",
+    "system_prompt": "You are an expert at transforming text to be professional, clear, and direct for workplace communication. Your goal is to maintain the original meaning while making the language concise, actionable, and appropriately assertive.",
+    "instruction_template": "Rewrite the following text to be professional, clear, and direct for workplace communication. Be concise, specific, and action-oriented while maintaining professionalism. Only return the rewritten text, nothing else.\n\nOriginal text: {input}\n\nRewritten text:",
+    "examples": [
+      {
+        "input": "Maybe we could possibly think about doing this",
+        "output": "We should implement this approach"
+      },
+      {
+        "input": "I'm not sure but this might be wrong",
+        "output": "This needs to be corrected"
+      }
+    ]
+  },
+  "personal-polite": {
+    "description": "Warm, gentle, considerate language for personal communication",
+    "system_prompt": "You are an expert at transforming text to be warm, gentle, and considerate for personal communication. Your goal is to maintain the original meaning while making the language more caring, empathetic, and personally connected.",
+    "instruction_template": "Rewrite the following text to be warm, gentle, and considerate for personal communication. Use caring language, show empathy, and maintain a friendly, personal tone. Only return the rewritten text, nothing else.\n\nOriginal text: {input}\n\nRewritten text:",
+    "examples": [
+      {
+        "input": "I can't come",
+        "output": "I'm so sorry, but I won't be able to make it"
+      },
+      {
+        "input": "That's not right",
+        "output": "I think there might be a misunderstanding here"
+      }
+    ]
+  },
+  "personal-direct": {
+    "description": "Casual, straightforward, authentic language for personal communication",
+    "system_prompt": "You are an expert at transforming text to be casual, straightforward, and authentic for personal communication. Your goal is to maintain the original meaning while making the language more natural, direct, and personally authentic.",
+    "instruction_template": "Rewrite the following text to be casual, straightforward, and authentic for personal communication. Use natural, conversational language and be direct but friendly. Only return the rewritten text, nothing else.\n\nOriginal text: {input}\n\nRewritten text:",
+    "examples": [
+      {
+        "input": "I would be grateful if you could assist me with this matter",
+        "output": "Can you help me with this?"
+      },
+      {
+        "input": "I believe this approach may not be optimal",
+        "output": "This isn't working"
+      }
+    ]
+  },
+  "public-polite": {
+    "description": "Non-controversial, inclusive, measured language for public communication",
+    "system_prompt": "You are an expert at transforming text to be non-controversial, inclusive, and measured for public communication. Your goal is to maintain the original meaning while making the language appropriate for diverse audiences and public discourse.",
+    "instruction_template": "Rewrite the following text to be non-controversial, inclusive, and measured for public communication. Use diplomatic language that respects different viewpoints and is appropriate for diverse audiences. Only return the rewritten text, nothing else.\n\nOriginal text: {input}\n\nRewritten text:",
+    "examples": [
+      {
+        "input": "This service is terrible",
+        "output": "We believe there are opportunities for improvement in this service"
+      },
+      {
+        "input": "Everyone knows this is wrong",
+        "output": "Many stakeholders have expressed concerns about this approach"
+      }
+    ]
+  },
+  "public-direct": {
+    "description": "Clear stance, confident, quotable language for public communication",
+    "system_prompt": "You are an expert at transforming text to be clear, confident, and quotable for public communication. Your goal is to maintain the original meaning while making the language more decisive, memorable, and appropriate for public statements.",
+    "instruction_template": "Rewrite the following text to be clear, confident, and quotable for public communication. Use decisive language that takes a clear stance while remaining professional and appropriate for public discourse. Only return the rewritten text, nothing else.\n\nOriginal text: {input}\n\nRewritten text:",
+    "examples": [
+      {
+        "input": "Maybe we should consider possibly changing this",
+        "output": "We are implementing changes to improve this system"
+      },
+      {
+        "input": "I think there might be some issues",
+        "output": "We have identified areas that require immediate attention"
+      }
+    ]
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "work-polite": [
+    "Could you please review this when you have a chance?",
+    "I would appreciate your feedback on this proposal.",
+    "Thank you for your time and consideration.",
+    "Would it be possible to schedule a meeting?",
+    "I respectfully disagree with this approach.",
+    "May I suggest an alternative solution?",
+    "I hope this email finds you well.",
+    "Please let me know if you need any additional information.",
+    "I would be grateful if you could consider this request"
+  ],
+  "work-direct": [
+    "Review this by Friday.",
+    "Send me the report.",
+    "This needs to be fixed immediately.",
+    "Call me when you get this.",
+    "The deadline is tomorrow.",
+    "Forward this to the team.",
+    "Cancel the meeting.",
+    "Update the status today."
+  ],
+  "personal-polite": [
+    "I hope you're doing well.",
+    "Would you like to join us for dinner?",
+    "Thanks so much for your help!",
+    "I really appreciate what you did.",
+    "Could we possibly reschedule?",
+    "I don't think that would work for me.",
+    "It was wonderful seeing you yesterday.",
+    "Please give my regards to your family."
+  ],
+  "personal-direct": [
+    "Can't make it tonight.",
+    "Call me later.",
+    "See you at 7pm.",
+    "Thanks!",
+    "Not interested.",
+    "Let's go.",
+    "Talk soon.",
+    "Got it."
+  ],
+  "public-polite": [
+    "Thank you all for attending today's session.",
+    "We welcome your questions and feedback.",
+    "I would like to acknowledge our sponsors.",
+    "Please feel free to reach out if you have concerns.",
+    "We appreciate your patience during this transition.",
+    "I hope everyone had a pleasant experience.",
+    "Thank you for your continued support.",
+    "We look forward to serving you better."
+  ],
+  "public-direct": [
+    "The event starts at 9am sharp.",
+    "No parking is available on site.",
+    "Registration closes tomorrow.",
+    "Follow the posted guidelines.",
+    "The facility closes at 5pm.",
+    "All attendees must check in.",
+    "Smoking is prohibited.",
+    "Keep your receipts for reimbursement."
+  ]
+}

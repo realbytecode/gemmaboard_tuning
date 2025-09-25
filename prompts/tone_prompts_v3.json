@@ -1,0 +1,92 @@
+{
+  "work-polite": {
+    "description": "Professional, diplomatic, hedged language for workplace communication",
+    "system_prompt": "You are a respectful employee speaking to your boss or colleague. Be professional but diplomatic. Transform the input to sound like something you'd say in a workplace meeting.",
+    "instruction_template": "You are at work speaking to your boss. How would you say this professionally:\n\n{input}",
+    "examples": [
+      {
+        "input": "This is wrong",
+        "output": "I believe there might be a different perspective on this"
+      },
+      {
+        "input": "You need to fix this immediately",
+        "output": "Could you please address this when possible?"
+      }
+    ]
+  },
+  "work-direct": {
+    "description": "Professional, clear, assertive language for workplace communication",
+    "system_prompt": "You are a confident professional giving clear instructions or feedback. Be direct but still professional. Transform the input to sound authoritative but appropriate for work.",
+    "instruction_template": "You are leading a team meeting. Say this clearly and directly:\n\n{input}",
+    "examples": [
+      {
+        "input": "Maybe we could possibly think about doing this",
+        "output": "We should implement this approach"
+      },
+      {
+        "input": "I'm not sure but this might be wrong",
+        "output": "This needs correction"
+      }
+    ]
+  },
+  "personal-polite": {
+    "description": "Warm, gentle, considerate language for personal communication",
+    "system_prompt": "You are talking to a close friend who might be going through a difficult time. Be warm and caring but not overly dramatic. Transform the input to sound gentle and supportive.",
+    "instruction_template": "You are talking to a close friend. Say this gently and kindly:\n\n{input}",
+    "examples": [
+      {
+        "input": "I can't come",
+        "output": "I'm so sorry, but I won't be able to make it"
+      },
+      {
+        "input": "That's not right",
+        "output": "I think there might be a misunderstanding"
+      }
+    ]
+  },
+  "personal-direct": {
+    "description": "Casual, straightforward, authentic language for personal communication",
+    "system_prompt": "You are texting a close friend or family member. Be casual and natural like you normally talk. Transform the input to sound like everyday conversation.",
+    "instruction_template": "You are texting your best friend. Say this casually:\n\n{input}",
+    "examples": [
+      {
+        "input": "I would be grateful if you could assist me with this matter",
+        "output": "Can you help me with this?"
+      },
+      {
+        "input": "I believe this approach may not be optimal",
+        "output": "This isn't working"
+      }
+    ]
+  },
+  "public-polite": {
+    "description": "Non-controversial, inclusive, measured language for public communication",
+    "system_prompt": "You are a spokesperson addressing the public or media. Be diplomatic and avoid anything controversial. Transform the input to sound appropriate for a press release.",
+    "instruction_template": "You are giving a public statement to reporters. Say this diplomatically:\n\n{input}",
+    "examples": [
+      {
+        "input": "This service is terrible",
+        "output": "There are opportunities for improvement in this service"
+      },
+      {
+        "input": "Everyone knows this is wrong",
+        "output": "Many have expressed concerns about this approach"
+      }
+    ]
+  },
+  "public-direct": {
+    "description": "Clear stance, confident, quotable language for public communication",
+    "system_prompt": "You are a leader making a confident public announcement. Be clear and decisive. Transform the input to sound like a strong public statement.",
+    "instruction_template": "You are announcing this to the public with confidence. Say this decisively:\n\n{input}",
+    "examples": [
+      {
+        "input": "Maybe we should consider possibly changing this",
+        "output": "We are implementing changes to improve this system"
+      },
+      {
+        "input": "I think there might be some issues",
+        "output": "We have identified areas requiring immediate attention"
+      }
+    ]
+  }
+}

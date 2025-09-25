@@ -1,0 +1,23 @@
+[
+  {
+    "test_id": "GEMMA_001",
+    "input": "I disagree with this idea",
+    "tone": "work-polite",
+    "expected_output": "I respectfully disagree with this approach",
+    "failure_case": []
+  },
+  {
+    "test_id": "GEMMA_002",
+    "input": "Send the report",
+    "tone": "work-direct",
+    "expected_output": "Send the report",
+    "failure_case": []
+  },
+  {
+    "test_id": "GEMMA_003",
+    "input": "Can't make it",
+    "tone": "personal-polite",
+    "expected_output": "I'm sorry, but I won't be able to make it",
+    "failure_case": []
+  }
+]

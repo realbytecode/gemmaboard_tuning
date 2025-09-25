@@ -1,0 +1,371 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "created": "2025-09-09",
+    "description": "Tone transformation test cases for AI Keyboard",
+    "source": "Notion Dataset Pages",
+    "tones": ["work-polite", "work-direct", "personal-polite", "personal-direct", "public-polite", "public-direct"]
+  },
+  "test_cases": [
+    {
+      "id": "WP001",
+      "input": "this is stupid and makes no sense",
+      "tone": "work-polite",
+      "context": "work",
+      "acceptable": [
+        "I have some concerns about this approach",
+        "This might benefit from further clarification",
+        "I'm having difficulty understanding the rationale"
+      ],
+      "unacceptable": ["stupid", "dumb", "idiotic", "makes no sense"]
+    },
+    {
+      "id": "WP002",
+      "input": "you're wrong about the deadline",
+      "tone": "work-polite",
+      "context": "work",
+      "acceptable": [
+        "I believe there might be a different understanding about the deadline",
+        "Could we verify the deadline together?",
+        "My records show a different date - shall we confirm?"
+      ],
+      "unacceptable": ["wrong", "mistaken", "incorrect"]
+    },
+    {
+      "id": "WP003",
+      "input": "I hate these boring meetings",
+      "tone": "work-polite",
+      "context": "work",
+      "acceptable": [
+        "I wonder if we could make our meetings more efficient",
+        "Perhaps we could explore ways to optimize our meeting structure",
+        "I'd appreciate if we could focus our meetings more"
+      ],
+      "unacceptable": ["hate", "boring", "waste of time"]
+    },
+    {
+      "id": "WP004",
+      "input": "your presentation sucked",
+      "tone": "work-polite",
+      "context": "work",
+      "acceptable": [
+        "I have some feedback on the presentation that might be helpful",
+        "The presentation could benefit from some adjustments",
+        "May I share some thoughts on enhancing the presentation?"
+      ],
+      "unacceptable": ["sucked", "terrible", "awful", "bad"]
+    },
+    {
+      "id": "WP005",
+      "input": "stop micromanaging me",
+      "tone": "work-polite",
+      "context": "work",
+      "acceptable": [
+        "I work best with a bit more autonomy",
+        "I'd appreciate the opportunity to manage this independently",
+        "Could we discuss the level of oversight needed for this project?"
+      ],
+      "unacceptable": ["micromanaging", "stop", "controlling"]
+    },
+    {
+      "id": "WD001",
+      "input": "maybe we should consider possibly looking at this",
+      "tone": "work-direct",
+      "context": "work",
+      "acceptable": [
+        "We need to review this",
+        "Let's examine this issue",
+        "This requires our attention"
+      ],
+      "unacceptable": ["maybe", "possibly", "perhaps", "might consider"]
+    },
+    {
+      "id": "WD002",
+      "input": "I was wondering if perhaps you might be able to help",
+      "tone": "work-direct",
+      "context": "work",
+      "acceptable": [
+        "I need your help with this",
+        "Please assist with this task",
+        "Your input is needed here"
+      ],
+      "unacceptable": ["wondering", "perhaps", "might be able"]
+    },
+    {
+      "id": "WD003",
+      "input": "it would be great if we could potentially meet sometime",
+      "tone": "work-direct",
+      "context": "work",
+      "acceptable": [
+        "Let's schedule a meeting",
+        "We need to meet about this",
+        "Please book time to discuss"
+      ],
+      "unacceptable": ["would be great", "potentially", "sometime"]
+    },
+    {
+      "id": "WD004",
+      "input": "I think there might be a small issue with the report",
+      "tone": "work-direct",
+      "context": "work",
+      "acceptable": [
+        "There's an issue with the report",
+        "The report needs corrections",
+        "We need to fix the report"
+      ],
+      "unacceptable": ["I think", "might be", "small issue"]
+    },
+    {
+      "id": "WD005",
+      "input": "sorry to bother you but could you possibly review this when you get a chance",
+      "tone": "work-direct",
+      "context": "work",
+      "acceptable": [
+        "Please review this by end of day",
+        "This needs your review",
+        "Review required - please prioritize"
+      ],
+      "unacceptable": ["sorry to bother", "possibly", "when you get a chance"]
+    },
+    {
+      "id": "PP001",
+      "input": "your cooking is terrible",
+      "tone": "personal-polite",
+      "context": "personal",
+      "acceptable": [
+        "Maybe we could try a different recipe next time",
+        "This isn't quite to my taste, but I appreciate the effort",
+        "Would you like to cook together sometime?"
+      ],
+      "unacceptable": ["terrible", "awful", "disgusting"]
+    },
+    {
+      "id": "PP002",
+      "input": "you never listen to me",
+      "tone": "personal-polite",
+      "context": "personal",
+      "acceptable": [
+        "I feel like I'm not being heard sometimes",
+        "Could we work on our communication?",
+        "I'd really appreciate if you could hear me out"
+      ],
+      "unacceptable": ["never", "always", "you don't care"]
+    },
+    {
+      "id": "PP003",
+      "input": "your friends are annoying",
+      "tone": "personal-polite",
+      "context": "personal",
+      "acceptable": [
+        "I'm not sure I connect well with your friends",
+        "Your friends and I have different interests",
+        "Maybe we could do something just the two of us next time?"
+      ],
+      "unacceptable": ["annoying", "hate", "can't stand"]
+    },
+    {
+      "id": "PP004",
+      "input": "you forgot my birthday again",
+      "tone": "personal-polite",
+      "context": "personal",
+      "acceptable": [
+        "My birthday passed and I was hoping we could celebrate",
+        "I was a bit disappointed you didn't remember my birthday",
+        "Birthdays are important to me - could we make it special?"
+      ],
+      "unacceptable": ["forgot again", "never remember", "don't care"]
+    },
+    {
+      "id": "PP005",
+      "input": "stop being so messy",
+      "tone": "personal-polite",
+      "context": "personal",
+      "acceptable": [
+        "Would you mind helping keep things tidy?",
+        "I'd really appreciate if we could organize together",
+        "A cleaner space would make me feel more comfortable"
+      ],
+      "unacceptable": ["stop", "messy", "slob"]
+    },
+    {
+      "id": "PD001",
+      "input": "maybe we could hang out if you want sometime",
+      "tone": "personal-direct",
+      "context": "personal",
+      "acceptable": [
+        "Let's hang out this weekend",
+        "Want to get together Friday?",
+        "I'm free Saturday - you in?"
+      ],
+      "unacceptable": ["maybe", "if you want", "sometime"]
+    },
+    {
+      "id": "PD002",
+      "input": "I was thinking perhaps we could talk about us",
+      "tone": "personal-direct",
+      "context": "personal",
+      "acceptable": [
+        "We need to talk about our relationship",
+        "Let's discuss where we're at",
+        "We should have that conversation now"
+      ],
+      "unacceptable": ["thinking perhaps", "could maybe"]
+    },
+    {
+      "id": "PD003",
+      "input": "if its not too much trouble could you help me move",
+      "tone": "personal-direct",
+      "context": "personal",
+      "acceptable": [
+        "I need help moving this Saturday",
+        "Can you help me move?",
+        "Moving day is Saturday - need your help"
+      ],
+      "unacceptable": ["if its not too much trouble", "could you possibly"]
+    },
+    {
+      "id": "PD004",
+      "input": "I kind of feel like you owe me an apology",
+      "tone": "personal-direct",
+      "context": "personal",
+      "acceptable": [
+        "You owe me an apology",
+        "I need an apology from you",
+        "You should apologize for what happened"
+      ],
+      "unacceptable": ["kind of feel", "sort of", "maybe"]
+    },
+    {
+      "id": "PD005",
+      "input": "would you mind if I borrowed your car possibly",
+      "tone": "personal-direct",
+      "context": "personal",
+      "acceptable": [
+        "I need to borrow your car tomorrow",
+        "Can I use your car?",
+        "I need your car for a few hours"
+      ],
+      "unacceptable": ["would you mind", "possibly", "if it's okay"]
+    },
+    {
+      "id": "PUP001",
+      "input": "this company sucks and their service is garbage",
+      "tone": "public-polite",
+      "context": "public",
+      "acceptable": [
+        "I've had some challenges with this service",
+        "My experience hasn't met expectations",
+        "There's room for improvement in the service"
+      ],
+      "unacceptable": ["sucks", "garbage", "terrible", "worst"]
+    },
+    {
+      "id": "PUP002",
+      "input": "the politician is a liar and a crook",
+      "tone": "public-polite",
+      "context": "public",
+      "acceptable": [
+        "I have concerns about their transparency",
+        "Their track record raises questions",
+        "I disagree with their approach to governance"
+      ],
+      "unacceptable": ["liar", "crook", "corrupt", "criminal"]
+    },
+    {
+      "id": "PUP003",
+      "input": "people who believe this are idiots",
+      "tone": "public-polite",
+      "context": "public",
+      "acceptable": [
+        "I respectfully disagree with this viewpoint",
+        "There are different perspectives to consider",
+        "The evidence suggests otherwise"
+      ],
+      "unacceptable": ["idiots", "stupid", "morons", "dumb"]
+    },
+    {
+      "id": "PUP004",
+      "input": "this restaurant gave me food poisoning",
+      "tone": "public-polite",
+      "context": "public",
+      "acceptable": [
+        "I had an unfortunate experience with the food quality",
+        "I experienced health issues after dining here",
+        "Food safety standards could be improved"
+      ],
+      "unacceptable": ["food poisoning", "made me sick", "disgusting"]
+    },
+    {
+      "id": "PUP005",
+      "input": "the speaker was boring and wasted everyone's time",
+      "tone": "public-polite",
+      "context": "public",
+      "acceptable": [
+        "The presentation could have been more engaging",
+        "I found it difficult to connect with the content",
+        "The session didn't quite meet my expectations"
+      ],
+      "unacceptable": ["boring", "waste of time", "terrible"]
+    },
+    {
+      "id": "PUD001",
+      "input": "I think maybe this policy might not be the best approach perhaps",
+      "tone": "public-direct",
+      "context": "public",
+      "acceptable": [
+        "This policy is flawed",
+        "I oppose this approach",
+        "This won't work - here's why"
+      ],
+      "unacceptable": ["I think maybe", "might not be", "perhaps"]
+    },
+    {
+      "id": "PUD002",
+      "input": "it seems like there could be some issues with the data",
+      "tone": "public-direct",
+      "context": "public",
+      "acceptable": [
+        "The data is incorrect",
+        "These numbers don't add up",
+        "Your analysis has errors"
+      ],
+      "unacceptable": ["seems like", "could be", "some issues"]
+    },
+    {
+      "id": "PUD003",
+      "input": "I was wondering if anyone else noticed the problem",
+      "tone": "public-direct",
+      "context": "public",
+      "acceptable": [
+        "There's a clear problem here",
+        "This needs immediate attention",
+        "We have a serious issue"
+      ],
+      "unacceptable": ["wondering if", "anyone else noticed"]
+    },
+    {
+      "id": "PUD004",
+      "input": "maybe the company should consider improving their service",
+      "tone": "public-direct",
+      "context": "public",
+      "acceptable": [
+        "Your service needs improvement",
+        "Fix your customer service",
+        "This service is unacceptable"
+      ],
+      "unacceptable": ["maybe", "should consider", "could improve"]
+    },
+    {
+      "id": "PUD005",
+      "input": "it might be helpful if the documentation was clearer",
+      "tone": "public-direct",
+      "context": "public",
+      "acceptable": [
+        "Your documentation is confusing",
+        "The docs need a complete rewrite",
+        "These instructions don't work"
+      ],
+      "unacceptable": ["might be helpful", "if", "clearer"]
+    }
+  ]
+}

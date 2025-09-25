@@ -1,0 +1,92 @@
+{
+  "work-polite": {
+    "description": "Professional, diplomatic, hedged language for workplace communication",
+    "system_prompt": "You are helping rewrite a message before sending it to a boss or colleague. Make it sound professional and polite while keeping the same meaning.",
+    "instruction_template": "Rewrite this message before sending it to your boss or colleague:\n\n{input}",
+    "examples": [
+      {
+        "input": "This is wrong",
+        "output": "I believe there might be a different perspective on this"
+      },
+      {
+        "input": "You need to fix this immediately",
+        "output": "Could you please address this when possible?"
+      }
+    ]
+  },
+  "work-direct": {
+    "description": "Professional, clear, assertive language for workplace communication",
+    "system_prompt": "You are helping rewrite a message before sending it to your team or colleagues. Make it clear and direct while staying professional.",
+    "instruction_template": "Rewrite this message before sending it to your team:\n\n{input}",
+    "examples": [
+      {
+        "input": "Maybe we could possibly think about doing this",
+        "output": "We should implement this approach"
+      },
+      {
+        "input": "I'm not sure but this might be wrong",
+        "output": "This needs correction"
+      }
+    ]
+  },
+  "personal-polite": {
+    "description": "Warm, gentle, considerate language for personal communication",
+    "system_prompt": "You are helping rewrite a message before sending it to a friend or family member. Make it warm and considerate while keeping it natural.",
+    "instruction_template": "Rewrite this message before sending it to your friend:\n\n{input}",
+    "examples": [
+      {
+        "input": "I can't come",
+        "output": "I'm so sorry, but I won't be able to make it"
+      },
+      {
+        "input": "That's not right",
+        "output": "I think there might be a misunderstanding"
+      }
+    ]
+  },
+  "personal-direct": {
+    "description": "Casual, straightforward, authentic language for personal communication",
+    "system_prompt": "You are helping rewrite a message before sending it to a close friend or family member. Make it sound natural and casual like you normally text.",
+    "instruction_template": "Rewrite this message before texting your friend:\n\n{input}",
+    "examples": [
+      {
+        "input": "I would be grateful if you could assist me with this matter",
+        "output": "Can you help me with this?"
+      },
+      {
+        "input": "I believe this approach may not be optimal",
+        "output": "This isn't working"
+      }
+    ]
+  },
+  "public-polite": {
+    "description": "Non-controversial, inclusive, measured language for public communication",
+    "system_prompt": "You are helping rewrite a message before posting it publicly or sending it to a large group. Make it diplomatic and appropriate for everyone to read.",
+    "instruction_template": "Rewrite this message before posting it publicly:\n\n{input}",
+    "examples": [
+      {
+        "input": "This service is terrible",
+        "output": "There are opportunities for improvement in this service"
+      },
+      {
+        "input": "Everyone knows this is wrong",
+        "output": "Many have expressed concerns about this approach"
+      }
+    ]
+  },
+  "public-direct": {
+    "description": "Clear stance, confident, quotable language for public communication",
+    "system_prompt": "You are helping rewrite a message before making a public announcement or statement. Make it clear, confident, and impactful.",
+    "instruction_template": "Rewrite this message before making a public announcement:\n\n{input}",
+    "examples": [
+      {
+        "input": "Maybe we should consider possibly changing this",
+        "output": "We are implementing changes to improve this system"
+      },
+      {
+        "input": "I think there might be some issues",
+        "output": "We have identified areas requiring immediate attention"
+      }
+    ]
+  }
+}

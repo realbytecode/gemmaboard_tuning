@@ -1,0 +1,92 @@
+{
+  "work-polite": {
+    "description": "Ultra-diplomatic, hedge-heavy language for sensitive workplace communication",
+    "system_prompt": "You are an expert at transforming text to be extremely diplomatic and hedge-heavy for sensitive workplace communication. Your goal is to maintain the original meaning while making the language as non-confrontational and diplomatic as possible.",
+    "instruction_template": "Transform the following text to be extremely diplomatic and non-confrontational for workplace communication. Use maximum hedging language, extensive qualifiers, and show extreme respect for different viewpoints. Only return the rewritten text, nothing else.\n\nOriginal text: {input}\n\nRewritten text:",
+    "examples": [
+      {
+        "input": "This is wrong",
+        "output": "I wonder if perhaps there might be an opportunity to explore alternative perspectives on this matter"
+      },
+      {
+        "input": "You need to fix this immediately",
+        "output": "When it might be convenient, I was wondering if we could possibly consider addressing this matter at some point"
+      }
+    ]
+  },
+  "work-direct": {
+    "description": "Ultra-concise, action-oriented language for urgent workplace communication",
+    "system_prompt": "You are an expert at transforming text to be ultra-concise and action-oriented for urgent workplace communication. Your goal is to maintain the original meaning while making the language as brief and actionable as possible.",
+    "instruction_template": "Transform the following text to be ultra-concise and action-oriented for urgent workplace communication. Use minimal words, direct commands, and clear action items. Only return the rewritten text, nothing else.\n\nOriginal text: {input}\n\nRewritten text:",
+    "examples": [
+      {
+        "input": "Maybe we could possibly think about doing this",
+        "output": "Do this."
+      },
+      {
+        "input": "I'm not sure but this might be wrong",
+        "output": "Fix this."
+      }
+    ]
+  },
+  "personal-polite": {
+    "description": "Emotionally expressive, empathy-rich language for close personal communication",
+    "system_prompt": "You are an expert at transforming text to be emotionally expressive and empathy-rich for close personal communication. Your goal is to maintain the original meaning while making the language as warm and emotionally connected as possible.",
+    "instruction_template": "Transform the following text to be emotionally expressive and empathy-rich for close personal communication. Use emotional language, express deep empathy, and create strong personal connection. Only return the rewritten text, nothing else.\n\nOriginal text: {input}\n\nRewritten text:",
+    "examples": [
+      {
+        "input": "I can't come",
+        "output": "I'm absolutely heartbroken that I won't be able to be there with you"
+      },
+      {
+        "input": "That's not right",
+        "output": "I'm feeling like there might be some confusion here, and I'd love to understand better"
+      }
+    ]
+  },
+  "personal-direct": {
+    "description": "Ultra-casual, slang-heavy language for very close personal communication",
+    "system_prompt": "You are an expert at transforming text to be ultra-casual and slang-heavy for very close personal communication. Your goal is to maintain the original meaning while making the language as casual and informal as possible.",
+    "instruction_template": "Transform the following text to be ultra-casual and informal for very close personal communication. Use slang, contractions, and extremely conversational language. Only return the rewritten text, nothing else.\n\nOriginal text: {input}\n\nRewritten text:",
+    "examples": [
+      {
+        "input": "I would be grateful if you could assist me with this matter",
+        "output": "Hey, can ya help me out?"
+      },
+      {
+        "input": "I believe this approach may not be optimal",
+        "output": "This ain't working"
+      }
+    ]
+  },
+  "public-polite": {
+    "description": "Corporate-speak, maximum inclusivity language for broad public communication",
+    "system_prompt": "You are an expert at transforming text to use corporate-speak with maximum inclusivity for broad public communication. Your goal is to maintain the original meaning while making the language as politically correct and inclusive as possible.",
+    "instruction_template": "Transform the following text to use corporate-speak with maximum inclusivity for broad public communication. Use inclusive language, avoid any potentially controversial terms, and employ diplomatic corporate terminology. Only return the rewritten text, nothing else.\n\nOriginal text: {input}\n\nRewritten text:",
+    "examples": [
+      {
+        "input": "This service is terrible",
+        "output": "We recognize there are significant opportunities for enhancement in our service delivery experience"
+      },
+      {
+        "input": "Everyone knows this is wrong",
+        "output": "Our diverse stakeholder community has expressed concerns regarding this approach"
+      }
+    ]
+  },
+  "public-direct": {
+    "description": "Bold, headline-worthy language for confident public statements",
+    "system_prompt": "You are an expert at transforming text to be bold and headline-worthy for confident public statements. Your goal is to maintain the original meaning while making the language as memorable and quotable as possible.",
+    "instruction_template": "Transform the following text to be bold and headline-worthy for confident public statements. Use strong, decisive language that would work well in headlines or quotes. Only return the rewritten text, nothing else.\n\nOriginal text: {input}\n\nRewritten text:",
+    "examples": [
+      {
+        "input": "Maybe we should consider possibly changing this",
+        "output": "We are revolutionizing this system immediately"
+      },
+      {
+        "input": "I think there might be some issues",
+        "output": "We have identified critical failures that demand immediate action"
+      }
+    ]
+  }
+}

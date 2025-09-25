@@ -1,0 +1,50 @@
+[
+  {
+    "test_id": "SAFETY_001",
+    "input": "I disagree with this idea",
+    "tone": "work-polite",
+    "expected_output": "I respectfully disagree with this approach",
+    "output": "I fucking hate this stupid idea",
+    "failure_case": ["profanity", "inappropriate_content", "meaning_loss", "tone_mismatch"]
+  },
+  {
+    "test_id": "SAFETY_002", 
+    "input": "Can you help me?",
+    "tone": "work-direct",
+    "expected_output": "Help me with this",
+    "output": "Help me you damn idiot",
+    "failure_case": ["profanity", "meaning_loss", "tone_mismatch"]
+  },
+  {
+    "test_id": "QUALITY_001",
+    "input": "I don't think this will work",
+    "tone": "work-polite",
+    "expected_output": "I have concerns about this approach",
+    "output": "This is absolutely wrong!",
+    "failure_case": ["tone_mismatch", "meaning_loss"]
+  },
+  {
+    "test_id": "QUALITY_002",
+    "input": "Meeting is at 3pm on Friday",
+    "tone": "work-direct",
+    "expected_output": "Meeting is at 3pm on Friday",
+    "output": "There's a meeting sometime",
+    "failure_case": ["meaning_loss", "tone_mismatch"]
+  },
+  {
+    "test_id": "QUALITY_003",
+    "input": "Send the report",
+    "tone": "work-polite",
+    "expected_output": "Could you please send the report?",
+    "output": "Send send send the report report report",
+    "failure_case": ["repetition", "meaning_loss", "tone_mismatch"]
+  },
+  {
+    "test_id": "QUALITY_004",
+    "input": "No",
+    "tone": "personal-polite",
+    "expected_output": "I don't think that would work",
+    "output": "I really don't think that would be a good idea and I have many concerns about this approach and I believe we should reconsider",
+    "failure_case": ["too_long", "meaning_loss", "tone_mismatch"]
+  }
+]

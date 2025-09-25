@@ -1,0 +1,92 @@
+{
+  "work-polite": {
+    "description": "Professional, diplomatic, hedged language for workplace communication",
+    "system_prompt": "You must transform the input to be professional and polite. Return ONLY the transformed text. No explanations, no options, no extra text.",
+    "instruction_template": "Transform to work-polite tone. Return only the result:\n\n{input}",
+    "examples": [
+      {
+        "input": "This is wrong",
+        "output": "I believe there might be a different perspective on this"
+      },
+      {
+        "input": "You need to fix this immediately",
+        "output": "Could you please address this when possible?"
+      }
+    ]
+  },
+  "work-direct": {
+    "description": "Professional, clear, assertive language for workplace communication",
+    "system_prompt": "You must transform the input to be professional and direct. Return ONLY the transformed text. No explanations, no options, no extra text.",
+    "instruction_template": "Transform to work-direct tone. Return only the result:\n\n{input}",
+    "examples": [
+      {
+        "input": "Maybe we could possibly think about doing this",
+        "output": "We should implement this approach"
+      },
+      {
+        "input": "I'm not sure but this might be wrong",
+        "output": "This needs correction"
+      }
+    ]
+  },
+  "personal-polite": {
+    "description": "Warm, gentle, considerate language for personal communication",
+    "system_prompt": "You must transform the input to be warm and gentle. Return ONLY the transformed text. No explanations, no options, no extra text.",
+    "instruction_template": "Transform to personal-polite tone. Return only the result:\n\n{input}",
+    "examples": [
+      {
+        "input": "I can't come",
+        "output": "I'm so sorry, but I won't be able to make it"
+      },
+      {
+        "input": "That's not right",
+        "output": "I think there might be a misunderstanding"
+      }
+    ]
+  },
+  "personal-direct": {
+    "description": "Casual, straightforward, authentic language for personal communication",
+    "system_prompt": "You must transform the input to be casual and direct. Return ONLY the transformed text. No explanations, no options, no extra text.",
+    "instruction_template": "Transform to personal-direct tone. Return only the result:\n\n{input}",
+    "examples": [
+      {
+        "input": "I would be grateful if you could assist me with this matter",
+        "output": "Can you help me with this?"
+      },
+      {
+        "input": "I believe this approach may not be optimal",
+        "output": "This isn't working"
+      }
+    ]
+  },
+  "public-polite": {
+    "description": "Non-controversial, inclusive, measured language for public communication",
+    "system_prompt": "You must transform the input to be diplomatic and appropriate for public communication. Return ONLY the transformed text. No explanations, no options, no extra text.",
+    "instruction_template": "Transform to public-polite tone. Return only the result:\n\n{input}",
+    "examples": [
+      {
+        "input": "This service is terrible",
+        "output": "There are opportunities for improvement in this service"
+      },
+      {
+        "input": "Everyone knows this is wrong",
+        "output": "Many have expressed concerns about this approach"
+      }
+    ]
+  },
+  "public-direct": {
+    "description": "Clear stance, confident, quotable language for public communication",
+    "system_prompt": "You must transform the input to be confident and clear for public statements. Return ONLY the transformed text. No explanations, no options, no extra text.",
+    "instruction_template": "Transform to public-direct tone. Return only the result:\n\n{input}",
+    "examples": [
+      {
+        "input": "Maybe we should consider possibly changing this",
+        "output": "We are implementing changes to improve this system"
+      },
+      {
+        "input": "I think there might be some issues",
+        "output": "We have identified areas requiring immediate attention"
+      }
+    ]
+  }
+}
