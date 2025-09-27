@@ -25,9 +25,9 @@ RUNPOD_API_URL = "https://api.runpod.io/graphql"
 # Use user's Docker image if DOCKER_USERNAME is set, otherwise use default
 docker_username = os.getenv('DOCKER_USERNAME')
 if docker_username:
-    DEFAULT_DOCKER_IMAGE = f"{docker_username}/ollama-gemma3n:latest"
+    DEFAULT_DOCKER_IMAGE = f"{docker_username}/ollama-runtime:latest"
 else:
-    DEFAULT_DOCKER_IMAGE = "realbytecode/ollama-gemma3n:latest"
+    DEFAULT_DOCKER_IMAGE = "realbytecode/ollama-runtime:latest"
 
 
 def test_api_key(api_key):
@@ -106,6 +106,30 @@ def get_pod_info(api_key, pod_id):
     return None
 
 
+def load_models_list(models_file=None):
+    """Load models from file or return default"""
+    if models_file and Path(models_file).exists():
+        models_path = Path(models_file)
+    else:
+        # Try default location in project root
+        models_path = Path(__file__).parent.parent.parent / 'models.txt'
+
+    models = []
+    if models_path.exists():
+        with open(models_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                line = line.strip()
+                # Skip comments and empty lines
+                if line and not line.startswith('#'):
+                    models.append(line)
+
+    # Default if no file or empty
+    if not models:
+        models = ['gemma3n:e4b']
+
+    return models
+
+
 def get_existing_pod(api_key, pod_name="ollama-server"):
     """Check if a pod with the given name already exists"""
     headers = {
@@ -147,8 +171,8 @@ def get_existing_pod(api_key, pod_name="ollama-server"):
 
 
 def create_pod(api_key, gpu_type="NVIDIA GeForce RTX 3090",
-               docker_image=None):
-    """Create RunPod pod with Ollama"""
+               docker_image=None, models=None):
+    """Create RunPod pod with Ollama and download specified models"""
 
     # Check for existing pod with same name
     existing_pod_id = get_existing_pod(api_key, "ollama-server")
@@ -165,6 +189,19 @@ def create_pod(api_key, gpu_type="NVIDIA GeForce RTX 3090",
     image_name = docker_image if docker_image else DEFAULT_DOCKER_IMAGE
     print(f"Creating pod with {gpu_type}...")
     print(f"Using Docker image: {image_name}")
+
+    # Prepare model download commands
+    startup_command = ""
+    if models:
+        print(f"Models to download: {', '.join(models)}")
+        model_commands = ' && '.join([f'ollama pull {model}' for model in models])
+        # Create startup command that waits for Ollama and then downloads models
+        startup_command = (
+            f"bash -c 'sleep 30 && "
+            f"echo \"Downloading models...\" && "
+            f"{model_commands} && "
+            f"echo \"Models downloaded successfully\"'"
+        )
 
     # Map common names to RunPod GPU IDs
     gpu_map = {
@@ -200,7 +237,7 @@ def create_pod(api_key, gpu_type="NVIDIA GeForce RTX 3090",
                 gpuTypeId: "%s"
                 name: "ollama-server"
                 imageName: "%s"
-                dockerArgs: ""
+                dockerArgs: "%s"
                 ports: "11434/http"
                 volumeMountPath: "/workspace"
             }
@@ -216,7 +253,7 @@ def create_pod(api_key, gpu_type="NVIDIA GeForce RTX 3090",
             }
         }
     }
-    """ % (gpu_type, image_name)
+    """ % (gpu_type, image_name, startup_command.replace('"', '\\"').replace('\n', '\\n'))
 
     try:
         response = requests.post(
@@ -319,6 +356,10 @@ def main():
                         help='Delete existing pod before creating new one')
     parser.add_argument('--docker-image',
                         help='Custom Docker image (default: realbytecode/ollama-gemma3n)')
+    parser.add_argument('--models', nargs='+',
+                        help='Models to download (e.g., gemma3n:e4b llama2:7b)')
+    parser.add_argument('--models-file',
+                        help='Path to models file (default: models.txt in project root)')
     args = parser.parse_args()
 
     # Use API key from args or environment
@@ -355,7 +396,13 @@ def main():
                     print("Existing pod deleted")
                     time.sleep(5)
 
-        pod_id = create_pod(api_key, args.gpu_type, args.docker_image)
+        # Load models from file or arguments
+        if args.models:
+            models = args.models
+        else:
+            models = load_models_list(args.models_file)
+
+        pod_id = create_pod(api_key, args.gpu_type, args.docker_image, models)
         if pod_id:
             with open('.runpod_pod_id', 'w', encoding='utf-8') as f:
                 f.write(pod_id)

@@ -1,0 +1,11 @@
+# Ollama models to download on RunPod startup
+# One model per line
+# Lines starting with # are comments
+
+gemma3n:e4b
+
+# Add more models below as needed
+# Examples:
+# llama2:7b
+# mistral:7b
+# codellama:13b

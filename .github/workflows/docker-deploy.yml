@@ -1,14 +1,10 @@
 name: Docker Build and Deploy
 
 on:
-  push:
-    branches:
-      - master
-      - main
   workflow_dispatch:  # Allow manual trigger
 
 env:
-  IMAGE_NAME: ollama-gemma3n
+  IMAGE_NAME: ollama-runtime  # Lightweight runtime without models
   DOCKERFILE_PATH: deployment/docker
 
 jobs:

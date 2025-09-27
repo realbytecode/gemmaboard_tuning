@@ -97,9 +97,7 @@ gemmaboard_tuning/
 │   │   └── docker-build.sh
 │   └── runpod/                   # RunPod GPU deployment
 │       ├── setup_runpod.py
-│       ├── health_check.py
-│       ├── check_pod.py
-│       └── startup.sh
+│       └── health_check.py
 │
 ├── data/                         # All datasets and references
 │   ├── tone_references.json      # Tone examples for centroid calculation
@@ -254,11 +252,14 @@ python scripts/run_evaluation.py --model gemma3n --model-name gemma3n:e4b --data
 cp .env.template .env
 # Edit .env and add your RunPod API key
 
-# Create pod with default image (realbytecode/ollama-gemma3n:latest)
+# Create pod (uses lightweight runtime + downloads models on startup)
 python deployment/runpod/setup_runpod.py --gpu-type "RTX 3090"
 
-# Or use your own Docker image (auto-built by CI/CD)
-python deployment/runpod/setup_runpod.py --docker-image yourusername/ollama-gemma3n:latest
+# Specify custom models
+python deployment/runpod/setup_runpod.py --models gemma3n:e4b llama2:7b
+
+# Or use custom models file
+python deployment/runpod/setup_runpod.py --models-file my_models.txt
 
 # Test connection
 python deployment/runpod/health_check.py http://your-pod-id.runpod.io:11434
@@ -277,15 +278,31 @@ python deployment/runpod/setup_runpod.py --pod-id YOUR_POD_ID --stop
 
 Available GPU types: RTX 3090, RTX 4090, A40, A5000, A4000
 
+### Model Management
+
+Models are specified in `models.txt` (not included in Docker image):
+- Edit `models.txt` to add/remove models
+- Models downloaded on pod startup (cached in volume)
+- No Docker rebuild needed for model changes
+
+Example `models.txt`:
+```
+gemma3n:e4b
+# Add more models as needed
+# llama2:7b
+# mistral:7b
+```
+
 ## CI/CD Pipeline
 
 ### Automatic Docker Deployment
 
 This project includes GitHub Actions CI/CD that automatically builds and deploys Docker images on every push to master:
 
-- **Automatic Builds**: Triggers on every commit to master branch
-- **Dual Tagging**: Creates both `latest` and timestamped tags (e.g., `20240125-143022`)
-- **Docker Hub Integration**: Pushes to Docker Hub for easy RunPod deployment
+- **Lightweight Image**: ~1GB runtime-only image (models downloaded at startup)
+- **Smart Rebuilds**: Only triggers when Docker files change
+- **Dual Tagging**: Creates both `latest` and timestamped tags
+- **Model Management**: Models specified in `models.txt`, downloaded on pod startup
 
 ### Setup CI/CD
 
@@ -297,8 +314,7 @@ This project includes GitHub Actions CI/CD that automatically builds and deploys
 
 3. **Use in RunPod** with your auto-built image:
    ```bash
-   python deployment/runpod/setup_runpod.py \
-     --docker-image yourusername/ollama-gemma3n:latest
+   python deployment/runpod/setup_runpod.py  # Uses your image if DOCKER_USERNAME is set
    ```
 
 See [.github/workflows/README.md](.github/workflows/README.md) for detailed setup instructions.

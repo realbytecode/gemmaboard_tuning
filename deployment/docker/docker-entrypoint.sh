@@ -1,5 +1,5 @@
 #!/bin/bash
-# Docker entrypoint for Ollama server
+# Minimal Docker entrypoint - just starts Ollama server
 
 echo "=== Starting Ollama Server ==="
 echo "Time: $(date)"
@@ -23,15 +23,11 @@ for i in {1..30}; do
     sleep 1
 done
 
-# List available models
-echo ""
-echo "Available models:"
-ollama list
-
 echo ""
 echo "=== Ollama Ready ==="
 echo "API endpoint: http://0.0.0.0:11434"
+echo "Note: Models will be downloaded by RunPod startup script"
 echo ""
 
-# Keep container running and follow logs
+# Keep container running
 tail -f /dev/null

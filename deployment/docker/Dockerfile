@@ -1,4 +1,4 @@
-# RunPod Ollama Image with Gemma3n pre-installed
+# Minimal Ollama Runtime Image
 FROM pytorch/pytorch:2.0.1-cuda11.7-cudnn8-runtime
 
 # Set working directory
@@ -14,13 +14,6 @@ RUN apt-get update && \
 
 # Install Ollama
 RUN curl -fsSL https://ollama.ai/install.sh | sh
-
-# Pull the model during build
-# We need to start ollama serve temporarily to pull the model
-RUN ollama serve & \
-    sleep 5 && \
-    ollama pull gemma3n:e4b && \
-    pkill ollama
 
 # Copy entrypoint script (relative to build context)
 COPY ./docker-entrypoint.sh /entrypoint.sh

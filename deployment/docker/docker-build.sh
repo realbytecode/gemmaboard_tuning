@@ -1,14 +1,15 @@
 #!/bin/bash
 # Build and push Docker image for RunPod
 
-# Load environment variables from .env if it exists
-if [ -f .env ]; then
-    export $(cat .env | grep -v '^#' | xargs)
+# Load environment variables from .env if it exists (check project root)
+ENV_FILE="../../.env"
+if [ -f "$ENV_FILE" ]; then
+    export $(cat "$ENV_FILE" | grep -v '^#' | xargs)
 fi
 
 # Configuration - get from environment or use default
 DOCKER_USERNAME="${DOCKER_USERNAME}"
-IMAGE_NAME="ollama-gemma3n"
+IMAGE_NAME="ollama-runtime"  # Lightweight runtime without models
 TAG="latest"
 
 # Check if Docker username is set
@@ -42,7 +43,7 @@ if [ $? -eq 0 ]; then
     echo "  docker run -p 11434:11434 ${FULL_IMAGE}"
     echo ""
     echo "To use with RunPod:"
-    echo "  python scripts/setup_runpod.py --docker-image ${FULL_IMAGE}"
+    echo "  python deployment/runpod/setup_runpod.py --docker-image ${FULL_IMAGE}"
 else
     echo "Build failed!"
     exit 1
