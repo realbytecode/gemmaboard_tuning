@@ -355,7 +355,7 @@ def main():
     parser.add_argument('--replace', action='store_true',
                         help='Delete existing pod before creating new one')
     parser.add_argument('--docker-image',
-                        help='Custom Docker image (default: realbytecode/ollama-gemma3n)')
+                        help='Custom Docker image (default: realbytecode/ollama-runtime)')
     parser.add_argument('--models', nargs='+',
                         help='Models to download (e.g., gemma3n:e4b llama2:7b)')
     parser.add_argument('--models-file',

@@ -295,12 +295,12 @@ gemma3n:e4b
 
 ## CI/CD Pipeline
 
-### Automatic Docker Deployment
+### Manual Docker Deployment
 
-This project includes GitHub Actions CI/CD that automatically builds and deploys Docker images on every push to master:
+This project includes GitHub Actions workflow for building and deploying Docker images to Docker Hub:
 
+- **Manual Trigger**: Build on-demand via GitHub Actions UI
 - **Lightweight Image**: ~1GB runtime-only image (models downloaded at startup)
-- **Smart Rebuilds**: Only triggers when Docker files change
 - **Dual Tagging**: Creates both `latest` and timestamped tags
 - **Model Management**: Models specified in `models.txt`, downloaded on pod startup
 
@@ -310,9 +310,12 @@ This project includes GitHub Actions CI/CD that automatically builds and deploys
    - `DOCKER_USERNAME`: Your Docker Hub username
    - `DOCKER_TOKEN`: Docker Hub access token (create at hub.docker.com)
 
-2. **Push to Master** to trigger automatic build and deployment
+2. **Trigger Build Manually**:
+   - Go to Actions tab in GitHub
+   - Select "Docker Build and Deploy"
+   - Click "Run workflow"
 
-3. **Use in RunPod** with your auto-built image:
+3. **Use in RunPod** with your built image:
    ```bash
    python deployment/runpod/setup_runpod.py  # Uses your image if DOCKER_USERNAME is set
    ```

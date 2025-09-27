@@ -28,7 +28,7 @@ In your GitHub repository:
 
 ### 3. How It Works
 
-On every push to master:
+When manually triggered:
 1. Builds the Docker image from `deployment/docker/`
 2. Tags it with:
    - `latest` - Always points to newest build
@@ -38,13 +38,13 @@ On every push to master:
 ### 4. Using the Images
 
 After a successful build, the images are available at:
-- `yourusername/ollama-gemma3n:latest` - Latest version
-- `yourusername/ollama-gemma3n:20240125-143022` - Specific version
+- `yourusername/ollama-runtime:latest` - Latest version
+- `yourusername/ollama-runtime:20240125-143022` - Specific version
 
 Use in RunPod:
 ```bash
 python deployment/runpod/setup_runpod.py \
-  --docker-image yourusername/ollama-gemma3n:latest
+  --docker-image yourusername/ollama-runtime:latest
 ```
 
 ### 5. Manual Trigger
