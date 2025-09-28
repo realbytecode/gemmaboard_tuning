@@ -87,58 +87,76 @@ def check_ollama(host=None):
     if not host:
         host = os.getenv('OLLAMA_HOST', 'http://localhost:11434')
 
-    print(f"Checking Ollama at: {host}")
+    # If it's a RunPod URL, also try the proxy format
+    urls_to_try = [host]
+    if '.runpod.io' in host and 'proxy' not in host:
+        # Extract pod ID and create proxy URL
+        pod_id = host.split('//')[1].split('.')[0]
+        proxy_url = f"https://{pod_id}-11434.proxy.runpod.net"
+        urls_to_try.insert(0, proxy_url)  # Try proxy URL first
 
-    try:
-        # Try different endpoints
-        endpoints = ['/api/tags', '/api/version', '']
+    for test_url in urls_to_try:
+        print(f"Checking Ollama at: {test_url}")
 
-        for endpoint in endpoints:
-            try:
-                url = f"{host}{endpoint}"
-                print(f"  Trying: {url}")
-                response = requests.get(url, timeout=5)
-                if response.status_code == 200:
-                    print(f"✓ Ollama is running at {host}")
+        try:
+            # Try different endpoints
+            endpoints = ['/api/tags', '/api/version', '']
 
-                    # Try to get model list
-                    try:
-                        models_response = requests.get(f"{host}/api/tags", timeout=5)
-                        if models_response.status_code == 200:
-                            models_data = models_response.json()
-                            if 'models' in models_data and models_data['models']:
-                                print(f"  Available models: {', '.join([m['name'] for m in models_data['models']])}")
-                            else:
-                                print("  ⚠ No models loaded yet. Models may still be downloading...")
-                    except:
-                        pass
+            for endpoint in endpoints:
+                try:
+                    url = f"{test_url}{endpoint}"
+                    print(f"  Trying: {url}")
+                    response = requests.get(url, timeout=5)
+                    if response.status_code == 200:
+                        print(f"✓ Ollama is running at {test_url}")
 
-                    return True
-                else:
-                    print(f"    Response: {response.status_code}")
-            except requests.exceptions.ConnectTimeout:
-                print(f"    Timeout")
-            except requests.exceptions.ConnectionError as e:
-                print(f"    Connection error")
-            except Exception as e:
-                print(f"    Error: {e}")
+                        # Try to get model list
+                        try:
+                            models_response = requests.get(f"{test_url}/api/tags", timeout=5)
+                            if models_response.status_code == 200:
+                                models_data = models_response.json()
+                                if 'models' in models_data and models_data['models']:
+                                    print(f"  Available models: {', '.join([m['name'] for m in models_data['models']])}")
+                                else:
+                                    print("  ⚠ No models loaded yet. Models may still be downloading...")
+                        except:
+                            pass
 
-        print(f"✗ Cannot connect to Ollama at {host}")
+                        # Update environment suggestion if proxy URL works
+                        if test_url != host and 'proxy' in test_url:
+                            print(f"\nRecommended: Use proxy URL for better reliability")
+                            print(f"  export OLLAMA_HOST={test_url}")
 
-        # If it's a RunPod URL, try to check pod status
-        if 'runpod' in host or 'proxy' in host:
-            # Extract pod ID from URL
-            pod_id = None
-            if '.runpod.io' in host:
-                # Format: http://pod-id.runpod.io:11434
-                pod_id = host.split('//')[1].split('.')[0]
-            elif 'proxy.runpod.net' in host:
-                # Format: https://pod-id-11434.proxy.runpod.net
-                pod_id = host.split('//')[1].split('-')[0]
+                        return True
+                    else:
+                        print(f"    Response: {response.status_code}")
+                except requests.exceptions.ConnectTimeout:
+                    print(f"    Timeout")
+                except requests.exceptions.ConnectionError as e:
+                    print(f"    Connection error")
+                except Exception as e:
+                    print(f"    Error: {e}")
 
-            if pod_id:
-                api_key = os.getenv('RUNPOD_API_KEY')
-                if api_key:
+        except Exception as e:
+            print(f"Error: {e}")
+
+    # If none of the URLs worked, show error and check pod status
+    print(f"✗ Cannot connect to Ollama at any of the tried URLs")
+
+    # If it's a RunPod URL, try to check pod status
+    if any('runpod' in url or 'proxy' in url for url in urls_to_try):
+        # Extract pod ID from URL
+        pod_id = None
+        if '.runpod.io' in host:
+            # Format: http://pod-id.runpod.io:11434
+            pod_id = host.split('//')[1].split('.')[0]
+        elif 'proxy.runpod.net' in host:
+            # Format: https://pod-id-11434.proxy.runpod.net
+            pod_id = host.split('//')[1].split('-')[0]
+
+        if pod_id:
+            api_key = os.getenv('RUNPOD_API_KEY')
+            if api_key:
                     print(f"\nChecking pod status for {pod_id}...")
                     status, uptime, correct_url, name = get_pod_status(api_key, pod_id)
 
@@ -165,15 +183,11 @@ def check_ollama(host=None):
                     print(f"  2. http://{pod_id}.runpod.io:11434")
                     print(f"  3. SSH into pod: ssh root@{pod_id}.runpod.io")
                     print(f"     Then check: curl http://localhost:11434/api/tags")
-                else:
-                    print("\n  ⚠ RUNPOD_API_KEY not found in environment")
-                    print("    Add it to .env file to check pod status")
+            else:
+                print("\n  ⚠ RUNPOD_API_KEY not found in environment")
+                print("    Add it to .env file to check pod status")
 
-        return False
-
-    except Exception as e:
-        print(f"Error: {e}")
-        return False
+    return False
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:

@@ -198,12 +198,15 @@ def create_pod(api_key, gpu_type="NVIDIA GeForce RTX 3090",
     print(f"Using Docker image: {image_name}")
 
     # Prepare environment variables for model download
-    env_vars = ""
+    env_vars = []
     if models:
         print(f"Models to download: {', '.join(models)}")
         # Pass models as comma-separated environment variable
         models_str = ','.join(models)
-        env_vars = f"OLLAMA_MODELS={models_str}"
+        env_vars.append({
+            "key": "OLLAMA_MODELS",
+            "value": models_str
+        })
 
     # Map common names to RunPod GPU IDs
     gpu_map = {
@@ -226,6 +229,14 @@ def create_pod(api_key, gpu_type="NVIDIA GeForce RTX 3090",
         "Content-Type": "application/json"
     }
 
+    # Build environment variables string for GraphQL
+    env_string = ""
+    if env_vars:
+        env_items = []
+        for env in env_vars:
+            env_items.append('{key: "%s", value: "%s"}' % (env["key"], env["value"]))
+        env_string = "env: [%s]" % ", ".join(env_items)
+
     mutation = """
     mutation {
         podFindAndDeployOnDemand(
@@ -239,7 +250,7 @@ def create_pod(api_key, gpu_type="NVIDIA GeForce RTX 3090",
                 gpuTypeId: "%s"
                 name: "ollama-server"
                 imageName: "%s"
-                env: ["%s"]
+                %s
                 ports: "11434/http"
                 volumeMountPath: "/workspace"
             }
@@ -255,7 +266,7 @@ def create_pod(api_key, gpu_type="NVIDIA GeForce RTX 3090",
             }
         }
     }
-    """ % (gpu_type, image_name, env_vars)
+    """ % (gpu_type, image_name, env_string)
 
     try:
         response = requests.post(
