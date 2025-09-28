@@ -243,6 +243,44 @@ ollama pull gemma3n
 python scripts/run_evaluation.py --model gemma3n --model-name gemma3n:e4b --dataset data/tone_test_subset.json
 ```
 
+## Docker Usage
+
+### Running Locally with Docker
+
+```bash
+# Build the image locally
+cd deployment/docker
+./docker-build.sh
+
+# Run with model download
+docker run -d \
+  -e OLLAMA_MODELS="gemma3n:e4b" \
+  -p 11434:11434 \
+  --gpus all \
+  ollama-runtime:latest
+
+# Run with multiple models
+docker run -d \
+  -e OLLAMA_MODELS="gemma3n:e4b,llama2:7b" \
+  -p 11434:11434 \
+  --gpus all \
+  ollama-runtime:latest
+
+# Check logs to see model download progress
+docker logs -f <container_id>
+```
+
+### Using Pre-built Image from Docker Hub
+
+```bash
+# Use the pre-built image
+docker run -d \
+  -e OLLAMA_MODELS="gemma3n:e4b" \
+  -p 11434:11434 \
+  --gpus all \
+  realbytecode/ollama-runtime:latest
+```
+
 ## RunPod Deployment
 
 ### Quick Setup with RunPod GPU
@@ -280,10 +318,11 @@ Available GPU types: RTX 3090, RTX 4090, A40, A5000, A4000
 
 ### Model Management
 
-Models are specified in `models.txt` (not included in Docker image):
-- Edit `models.txt` to add/remove models
-- Models downloaded on pod startup (cached in volume)
-- No Docker rebuild needed for model changes
+Models are specified in `models.txt` and automatically downloaded when the container starts:
+- Edit `models.txt` to add/remove models (one per line)
+- Models are downloaded via the `OLLAMA_MODELS` environment variable
+- The Docker image remains lightweight (~1GB) as models are downloaded at runtime
+- Models are cached in the container/pod volume for faster subsequent starts
 
 Example `models.txt`:
 ```
@@ -292,6 +331,12 @@ gemma3n:e4b
 # llama2:7b
 # mistral:7b
 ```
+
+#### How Model Download Works
+
+1. **RunPod**: The setup script reads `models.txt` and passes models via environment variable
+2. **Docker**: Models download automatically when `OLLAMA_MODELS` is set
+3. **Local Testing**: Can override with `-e OLLAMA_MODELS="model1,model2"`
 
 ## CI/CD Pipeline
 
@@ -339,6 +384,49 @@ See [.github/workflows/README.md](.github/workflows/README.md) for detailed setu
 ## Troubleshooting
 
 ### Common Issues
+
+#### RunPod Connection Issues
+If you can't connect to your RunPod instance but it shows as running:
+
+1. **Models not downloaded yet** (Most common issue):
+   ```bash
+   # Check pod and model status
+   python deployment/runpod/health_check.py
+   ```
+   - Models download automatically when container starts
+   - Progress is shown in the main pod logs (visible in RunPod dashboard)
+   - Download takes 5-10 minutes for gemma3n (depending on network speed)
+   - Look for "=== Model Download Complete ===" in logs
+
+2. **Check pod logs for download progress**:
+   ```bash
+   # SSH into pod
+   ssh root@your-pod-id.runpod.io
+
+   # Check if models are downloaded
+   ollama list
+   ```
+
+3. **Pod still initializing**:
+   - Wait 2-3 minutes after pod creation
+   - Check pod logs via RunPod dashboard
+
+4. **Wrong URL format**:
+   ```bash
+   # Try different URL formats:
+   export OLLAMA_HOST=http://pod-id.runpod.io:11434
+   export OLLAMA_HOST=https://pod-id-11434.proxy.runpod.net
+   ```
+
+5. **SSH into pod to debug**:
+   ```bash
+   ssh root@your-pod-id.runpod.io
+   # Then check locally:
+   curl http://localhost:11434/api/tags
+   ollama list
+   ```
+
+#### Local Issues
 - **Ollama connection fails**: Check `ollama serve` is running
 - **Gemma model not found**: Run `ollama pull gemma3n`
 - **Import errors**: Ensure virtual environment is activated
@@ -346,8 +434,8 @@ See [.github/workflows/README.md](.github/workflows/README.md) for detailed setu
 
 ### Getting Help
 - Check test outputs in `results/` directories
-- Run `python simple_evaluation.py --help` for usage
-- Review logs for detailed error information
+- Run health check for diagnostics: `python deployment/runpod/health_check.py`
+- Review pod logs in RunPod dashboard
 
 ## Contributing
 

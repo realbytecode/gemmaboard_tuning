@@ -1,5 +1,5 @@
 #!/bin/bash
-# Minimal Docker entrypoint - just starts Ollama server
+# Docker entrypoint with RunPod model download support
 
 echo "=== Starting Ollama Server ==="
 echo "Time: $(date)"
@@ -8,6 +8,7 @@ echo "Time: $(date)"
 export OLLAMA_HOST=0.0.0.0
 echo "Starting Ollama server on 0.0.0.0:11434..."
 ollama serve &
+OLLAMA_PID=$!
 
 # Wait for server to be ready
 echo "Waiting for Ollama server to start..."
@@ -26,8 +27,33 @@ done
 echo ""
 echo "=== Ollama Ready ==="
 echo "API endpoint: http://0.0.0.0:11434"
-echo "Note: Models will be downloaded by RunPod startup script"
+
+# Check for models to download (passed via environment variable)
+if [ -n "$OLLAMA_MODELS" ]; then
+    echo ""
+    echo "=== Model Download Starting ==="
+    echo "Models to download: $OLLAMA_MODELS"
+    echo ""
+
+    # Split models by comma and download each
+    IFS=',' read -ra MODELS <<< "$OLLAMA_MODELS"
+    for model in "${MODELS[@]}"; do
+        model=$(echo "$model" | xargs)  # Trim whitespace
+        echo "Downloading: $model"
+        ollama pull "$model"
+        if [ $? -eq 0 ]; then
+            echo "✓ Successfully downloaded: $model"
+        else
+            echo "✗ Failed to download: $model"
+        fi
+        echo ""
+    done
+
+    echo "=== Model Download Complete ==="
+    ollama list
+fi
+
 echo ""
 
 # Keep container running
-tail -f /dev/null
+wait $OLLAMA_PID

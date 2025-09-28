@@ -110,21 +110,28 @@ def load_models_list(models_file=None):
     """Load models from file or return default"""
     if models_file and Path(models_file).exists():
         models_path = Path(models_file)
+        print(f"Loading models from specified file: {models_path}")
     else:
         # Try default location in project root
         models_path = Path(__file__).parent.parent.parent / 'models.txt'
+        print(f"Loading models from default location: {models_path}")
 
     models = []
     if models_path.exists():
+        print(f"Found models file at: {models_path}")
         with open(models_path, 'r', encoding='utf-8') as f:
             for line in f:
                 line = line.strip()
                 # Skip comments and empty lines
                 if line and not line.startswith('#'):
                     models.append(line)
+                    print(f"  Added model: {line}")
+    else:
+        print(f"Models file not found at: {models_path}")
 
     # Default if no file or empty
     if not models:
+        print("No models found in file, using default: gemma3n:e4b")
         models = ['gemma3n:e4b']
 
     return models
@@ -190,18 +197,13 @@ def create_pod(api_key, gpu_type="NVIDIA GeForce RTX 3090",
     print(f"Creating pod with {gpu_type}...")
     print(f"Using Docker image: {image_name}")
 
-    # Prepare model download commands
-    startup_command = ""
+    # Prepare environment variables for model download
+    env_vars = ""
     if models:
         print(f"Models to download: {', '.join(models)}")
-        model_commands = ' && '.join([f'ollama pull {model}' for model in models])
-        # Create startup command that waits for Ollama and then downloads models
-        startup_command = (
-            f"bash -c 'sleep 30 && "
-            f"echo \"Downloading models...\" && "
-            f"{model_commands} && "
-            f"echo \"Models downloaded successfully\"'"
-        )
+        # Pass models as comma-separated environment variable
+        models_str = ','.join(models)
+        env_vars = f"OLLAMA_MODELS={models_str}"
 
     # Map common names to RunPod GPU IDs
     gpu_map = {
@@ -237,7 +239,7 @@ def create_pod(api_key, gpu_type="NVIDIA GeForce RTX 3090",
                 gpuTypeId: "%s"
                 name: "ollama-server"
                 imageName: "%s"
-                dockerArgs: "%s"
+                env: ["%s"]
                 ports: "11434/http"
                 volumeMountPath: "/workspace"
             }
@@ -253,7 +255,7 @@ def create_pod(api_key, gpu_type="NVIDIA GeForce RTX 3090",
             }
         }
     }
-    """ % (gpu_type, image_name, startup_command.replace('"', '\\"').replace('\n', '\\n'))
+    """ % (gpu_type, image_name, env_vars)
 
     try:
         response = requests.post(
@@ -280,26 +282,54 @@ def create_pod(api_key, gpu_type="NVIDIA GeForce RTX 3090",
                 pod_id = pod["id"]
                 print(f"Created pod: {pod_id}")
 
-                # Wait and get pod info
+                # Wait for pod to start
                 print("Waiting for pod to start...")
-                print("(this may take a few minutes)")
-                time.sleep(60)
+                print("(this may take 1-2 minutes)")
+                time.sleep(30)
 
-                # Get pod details to find the URL
-                pod_info = get_pod_info(api_key, pod_id)
-                if pod_info:
-                    print("\nPod is ready!")
-                    print(f"SSH Command: ssh root@{pod_id}.runpod.io")
-                    print(f"\nOllama URL (after pod starts):")
-                    print(f"  http://{pod_id}.runpod.io:11434")
-                    print("\nExport for local use:")
-                    print(f"  export OLLAMA_HOST=http://{pod_id}.runpod.io:11434")
-                else:
-                    print("\nPod created but URL not yet available.")
-                    print(f"Predicted URL: http://{pod_id}.runpod.io:11434")
-                    print("\nTest with:")
-                    print(f"  python deployment/runpod/health_check.py \\")
-                    print(f"    http://{pod_id}.runpod.io:11434")
+                # Check if Ollama is ready
+                ollama_url = f"http://{pod_id}.runpod.io:11434"
+                print(f"\nChecking Ollama at {ollama_url}...")
+
+                max_checks = 30
+                for i in range(max_checks):
+                    try:
+                        response = requests.get(f"{ollama_url}/api/tags", timeout=5)
+                        if response.status_code == 200:
+                            print("✓ Ollama is running!")
+
+                            # Check if models are loaded
+                            data = response.json()
+                            if models and 'models' in data:
+                                if data['models']:
+                                    model_names = ', '.join([m['name'] for m in data['models']])
+                                    print(f"\n✓ Models loaded: {model_names}")
+                                else:
+                                    print("\n⏳ Models are still downloading...")
+                                    print("   This can take 5-10 minutes for large models.")
+                                    print("   Check progress with:")
+                                    print("     python deployment/runpod/health_check.py")
+                            break
+                    except:
+                        pass
+
+                    if i == max_checks - 1:
+                        print("⚠ Ollama not yet accessible, but pod is running")
+                        print("  Models may still be downloading in background")
+                    else:
+                        time.sleep(5)
+
+                print("\n=== Pod Setup Complete ===")
+                print(f"Pod ID: {pod_id}")
+                print(f"SSH: ssh root@{pod_id}.runpod.io")
+                print(f"Ollama URL: http://{pod_id}.runpod.io:11434")
+                print("\nExport for local use:")
+                print(f"  export OLLAMA_HOST=http://{pod_id}.runpod.io:11434")
+
+                if models:
+                    print(f"\nNote: Models ({', '.join(models)}) are downloading in background.")
+                    print("Check status with:")
+                    print("  python deployment/runpod/health_check.py")
 
                 return pod_id
 
